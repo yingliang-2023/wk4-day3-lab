@@ -5,6 +5,9 @@ const auth = require('http-auth');
 const { check, validationResult } = require('express-validator');
 
 const router = express.Router();
+
+
+
 const Registration = mongoose.model('Registration');
 const basic = auth.basic({
   file: path.join(__dirname, '../users.htpasswd'),
@@ -22,7 +25,7 @@ router.get('/register', (req, res) => {
 });
 
 
-router.get('/registrations', basic.check((req, res) => {
+router.get('/registrants', basic.check((req, res) => {
   Registration.find()
     .then((registrations) => {
       res.render('registrants', { title: 'Listing registrations', registrations });
@@ -31,10 +34,6 @@ router.get('/registrations', basic.check((req, res) => {
       res.send('Sorry! Something went wrong.'); 
     });
 }));
-
-
-
-
 
 
 router.post('/', 
