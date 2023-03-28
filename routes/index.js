@@ -28,7 +28,7 @@ router.get('/register', (req, res) => {
 router.get('/registrants', basic.check((req, res) => {
   Registration.find()
     .then((registrations) => {
-      res.render('registrants', { title: 'Listing registrations', registrations });
+      res.render('registrants', { title: 'Listing registrations', registrations:registrations });
     })
     .catch(() => { 
       res.send('Sorry! Something went wrong.'); 
