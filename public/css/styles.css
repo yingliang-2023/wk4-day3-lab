@@ -133,4 +133,19 @@ button, .submit-buttton {
   font-size: larger;
 }
 
+table{
+  border: 1px solid #313130;
+  text-align: center;
+  margin: auto !important;
+  background-color: #eaeefa;
+  font-size: 2rem;
+
+}
+
+th{
+  background-color: rgb(15, 24, 74);
+  color: #d4d5d8;
+}
+
+
 /*# sourceMappingURL=styles.css.map */
