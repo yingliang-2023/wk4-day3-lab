@@ -25,7 +25,8 @@ router.get('/register', (req, res) => {
 });
 
 
-router.get('/registrants', basic.check((req, res) => {
+router.get('/registrants',
+basic.check((req, res) => {
   Registration.find()
     .then((registrations) => {
       res.render('registrants', { title: 'Listing registrations', registrations:registrations });
@@ -63,6 +64,19 @@ router.post('/',
                 data: req.body,
              });
           }
+
+      async(req, res) => {
+        //console.log(req.body);
+        const errors=validationResult(req);
+        if(errors.isEmpty()) {
+          const registration=new Registration(req.body);
+          //generate salt to hash password
+          const salt=await bcrypt.genSalt(10);
+          //set user password to hash password
+          registration.password=await bcrypt.hash(registration.password,salt);
+          registration.save();
+        }
+      }
     });
 
 module.exports = router;
