@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
 const auth = require('http-auth');
+const bcrypt = require("bcrypt");
 const { check, validationResult } = require('express-validator');
 
 const router = express.Router();
@@ -10,7 +11,7 @@ const router = express.Router();
 
 const Registration = mongoose.model('Registration');
 const basic = auth.basic({
-  file: path.join(__dirname, '../users.htpasswd'),
+  file: path.join(__dirname, '../newuser.htpasswd'),
 });
 
 
@@ -39,14 +40,21 @@ basic.check((req, res) => {
 
 router.post('/', 
     [
-        check('name')
-        .isLength({ min: 1 })
-        .withMessage('Please enter a name'),
-        check('email')
-        .isLength({ min: 1 })
-        .withMessage('Please enter an email'),
+      check('name')
+      .isLength({ min: 1 })
+      .withMessage('Please enter a name'),
+      check('email')
+      .isLength({ min: 1 })
+      .withMessage('Please enter an email'),
+      check('username')
+      .isLength({ min: 1 })
+      .withMessage('Please enter a username'),
+      check('password')
+      .isLength({ min: 1 })
+      .withMessage('Please enter a password'),
     ],
-    (req, res) => {
+    
+    async(req, res) => {
         //console.log(req.body);
         const errors = validationResult(req);
         if (errors.isEmpty()) {
@@ -63,19 +71,26 @@ router.post('/',
                 errors: errors.array(),
                 data: req.body,
              });
-          }
+          };
 
-      async(req, res) => {
-        //console.log(req.body);
-        const errors=validationResult(req);
-        if(errors.isEmpty()) {
-          const registration=new Registration(req.body);
+        if (errors.isEmpty()) {
+          const registration = new Registration(req.body);
           //generate salt to hash password
-          const salt=await bcrypt.genSalt(10);
-          //set user password to hash password
-          registration.password=await bcrypt.hash(registration.password,salt);
-          registration.save();
-        }
+          const salt = await bcrypt.genSalt(10);
+          //set user password to hashed password
+          registration.password = await bcrypt.hash(registration.password, salt);
+          registration.save()
+            .then(() => {res.render('thankyou', { title: 'Thank you for Registration' });})
+            .catch((err) => {
+              console.log(err);
+              res.send('Sorry! Something went wrong.');
+            });
+          } else {
+            res.render('form', { 
+                title: 'Registration form',
+                errors: errors.array(),
+                data: req.body,
+             });
       }
     });
 
