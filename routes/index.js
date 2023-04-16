@@ -10,7 +10,7 @@ const router = express.Router();
 
 const Registration = mongoose.model('Registration');
 const basic = auth.basic({
-  file: path.join(__dirname, '../user.htpasswd'),
+  file: path.join(__dirname, '../users.htpasswd'),
 });
 
 
